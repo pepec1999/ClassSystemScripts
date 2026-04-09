@@ -1,0 +1,14 @@
+local module = {}
+
+
+function module:addCoins(player)
+
+	local leaderstats = player:WaitForChild("leaderstats")
+	local coins = leaderstats:WaitForChild("Coins")
+
+	print("Added " .. 12)
+	coins.Value = coins.Value + 12
+	print(coins.Value)
+end
+
+return module
