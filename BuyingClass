@@ -1,0 +1,206 @@
+local module5 = {}
+
+
+function module5.buyingClass(player, Class)
+	local data = player:FindFirstChild("Data")
+	local JumperClass = data:FindFirstChild("JumperClass")
+	local RunnerClass = data:FindFirstChild("RunnerClass")
+	local SlasherClass = data:FindFirstChild("SlasherClass")
+	
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+	local leaderstats = player:WaitForChild("leaderstats")
+	local coins = leaderstats:WaitForChild("Coins")
+	
+	local equipped = data:FindFirstChild("JumperClassEquipped")
+	local equipped2 = data:FindFirstChild("Equipped")
+	local equipped3 = data:FindFirstChild("SlasherClassEquipped")
+	local normalEquipped = data:FindFirstChild("NormalClassEquipped")
+	
+	local resetRunner = game.ReplicatedStorage:WaitForChild("RemoteEvents"):WaitForChild("ResetRunner")
+	local resetJumper = game.ReplicatedStorage:WaitForChild("RemoteEvents"):WaitForChild("ResetJumper")
+	local resetSlasher = game.ReplicatedStorage:WaitForChild("RemoteEvents"):WaitForChild("ResetSlasher")
+	
+	local knife = game.ReplicatedStorage:WaitForChild("Models"):waitForChild("Knife"):Clone()
+	
+	
+	
+	local part = workspace.Rig2.Equiped
+	local part2 = workspace.Rig.Equiped
+	local part3 = workspace.Rig3.Equiped
+	local partNormal = workspace.Rig4.Equiped
+	local d = true
+	humanoid.UseJumpPower = true
+
+	print("startModule")
+	print(Class)
+	if Class == "JumperClass" then
+		
+		print("JumperClass")
+		if JumperClass.Value == 1 and equipped.Value == 0 then
+			--part.BrickColor = BrickColor.new("Bright red")
+			
+			humanoid.WalkSpeed = 16
+			humanoid.JumpPower = 100
+
+			equipped.Value = 1
+
+			print("equipped ->", equipped.Value)
+
+
+		elseif JumperClass.Value == 1 and equipped.Value == 1 then
+			--part.BrickColor = BrickColor.new("Lime green")
+
+
+			humanoid.WalkSpeed = 16
+			humanoid.JumpPower = 50
+
+			equipped.Value = 0
+
+			print("Unequipped ->", equipped.Value)
+
+
+		end
+
+		if JumperClass.Value == 0 then
+
+
+
+			if coins.Value >= 20 then
+				--part.BrickColor = BrickColor.new("Bright red")
+				coins.Value -= 20
+				equipped.Value = 1
+
+				JumperClass.Value = 1
+				humanoid.JumpPower = 100
+				humanoid.WalkSpeed = 16
+
+
+			elseif coins.Value < 20 then
+				--part.BrickColor = BrickColor.new("Gold")
+
+
+				print("not enough coins for Jumper Class")
+				normalEquipped.Value = 1
+			end
+
+		end
+		
+		
+		
+	elseif Class == "Runner" then
+		print("Reset every class but not Runner")
+		
+		if RunnerClass.Value == 1 and equipped2.Value == 0 then
+			--part2.BrickColor = BrickColor.new("Bright red")
+
+			humanoid.WalkSpeed = 36
+
+			equipped2.Value = 1
+
+			print("equipped ->", equipped.Value)
+
+
+		elseif RunnerClass.Value == 1 and equipped2.Value == 1 then
+			--part2.BrickColor = BrickColor.new("Lime green")
+
+
+			print(equipped)
+			humanoid.WalkSpeed = 16
+			humanoid.JumpPower = 50
+
+			equipped2.Value = 0
+
+			print("Unequipped ->", equipped.Value)
+
+
+			end
+
+		if RunnerClass.Value == 0 then
+
+
+
+			if coins.Value >= 10 then
+				coins.Value -= 10
+				RunnerClass.Value = 1
+				humanoid.JumpPower = 50
+				humanoid.WalkSpeed = 36
+				equipped2.Value = 1
+				--part2.BrickColor = BrickColor.new("Bright red")
+
+
+
+			elseif coins.Value < 10 then
+				print("not enough coins")
+				RunnerClass.Value = 0
+				humanoid.WalkSpeed = 16
+				normalEquipped.Value = 1
+			end
+		end
+		
+	elseif Class == "SlasherClass" then
+		
+		
+		print("SlasherClassWorks")
+		print(SlasherClass.Value)
+		print(equipped3.Value)
+		if SlasherClass.Value == 1 and equipped3.Value == 0 then
+			print("Works")
+			
+			--part3.BrickColor = BrickColor.new("Bright red")
+			knife.Parent = player.Backpack
+			knife.Name = "PlayersKnife"
+
+			print(equipped)
+
+			equipped3.Value = 1
+
+			print("equipped ->", equipped3.Value)
+			equipped3.Value = 1
+			humanoid.WalkSpeed = 24
+			humanoid.JumpPower = 70
+			
+		elseif SlasherClass.Value == 1 and equipped3.Value == 1 then
+			--part3.BrickColor = BrickColor.new("Lime green")
+			
+			equipped3.Value = 0
+
+
+		end
+
+		if SlasherClass.Value == 0 then
+			print("None SlasherClass Found")
+
+
+
+			if coins.Value >= 50 then
+				knife.Parent = player.Backpack
+				knife.Name = "PlayersKnife"
+				coins.Value -= 50
+				SlasherClass.Value = 1
+				equipped3.Value = 1
+				humanoid.WalkSpeed = 24
+				humanoid.JumpPower = 70
+				
+
+
+
+			elseif coins.Value < 50 then
+				print("not enough coins")
+				SlasherClass.Value = 0
+				humanoid.WalkSpeed = 16
+				normalEquipped.Value = 1
+			end
+
+
+		end
+	elseif Class == "Normal" then
+		print("NormalClassWorks")
+		partNormal.BrickColor = BrickColor.new("Bright red")
+		humanoid.WalkSpeed = 16
+		humanoid.JumpPower = 50
+		normalEquipped.Value = 1
+		
+	end
+end
+return module5
