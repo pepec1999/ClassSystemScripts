@@ -1,0 +1,52 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local data = player:WaitForChild("Data")
+local runnerClass = data:WaitForChild("RunnerClass")
+local runnerEquipped = data:WaitForChild("Equipped")
+local normalClass = data:WaitForChild("NormalClass")
+local normalEquipped = data:WaitForChild("NormalClassEquipped")
+local jumperClass = data:WaitForChild("JumperClass")
+local jumperEquipped = data:WaitForChild("JumperClassEquipped")
+local slasherClass = data:WaitForChild("SlasherClass")
+local slasherEquipped = data:WaitForChild("SlasherClassEquipped")
+
+local runnerPart = workspace:WaitForChild("Rig"):WaitForChild("Equiped")
+local normalPart = workspace:WaitForChild("Rig4"):WaitForChild("Equiped")
+local jumperPart = workspace:WaitForChild("Rig2"):WaitForChild("Equiped")
+local slasherPart = workspace:WaitForChild("Rig3"):WaitForChild("Equiped")
+
+local function updatePartColor(part, classValue, isEquipped)
+    if classValue.Value == 0 then
+        part.Color = Color3.fromRGB(120, 120, 120)
+    elseif isEquipped then
+        part.Color = Color3.fromRGB(255, 0, 0)
+    else
+        part.Color = Color3.fromRGB(0, 255, 0)
+    end
+end
+
+
+
+
+local function updateColors()
+    local runnerIsEquipped = runnerEquipped.Value == 1
+    local normalIsEquipped = normalEquipped.Value == 1
+    local jumperIsEquipped = jumperEquipped.Value == 1
+    local slasherIsEquipped = slasherEquipped.Value == 1
+
+    updatePartColor(runnerPart, runnerClass, runnerIsEquipped)
+    updatePartColor(normalPart, normalClass, normalIsEquipped)
+    updatePartColor(jumperPart, jumperClass, jumperIsEquipped)
+    updatePartColor(slasherPart, slasherClass, slasherIsEquipped)
+end
+
+updateColors()
+runnerClass:GetPropertyChangedSignal("Value"):Connect(updateColors)
+runnerEquipped:GetPropertyChangedSignal("Value"):Connect(updateColors)
+normalClass:GetPropertyChangedSignal("Value"):Connect(updateColors)
+normalEquipped:GetPropertyChangedSignal("Value"):Connect(updateColors)
+jumperClass:GetPropertyChangedSignal("Value"):Connect(updateColors)
+jumperEquipped:GetPropertyChangedSignal("Value"):Connect(updateColors)
+slasherClass:GetPropertyChangedSignal("Value"):Connect(updateColors)
+slasherEquipped:GetPropertyChangedSignal("Value"):Connect(updateColors)
