@@ -1,0 +1,100 @@
+local DataStoreService = game:GetService("DataStoreService")
+local Players = game:GetService("Players")
+
+local DataStore = DataStoreService:GetDataStore("PlayerData")
+
+-- Save function with protection
+local function savePlayer(plr)
+	local leaderstats = plr:FindFirstChild("leaderstats")
+	local dataFolder = plr:FindFirstChild("Data")
+
+	if not leaderstats or not dataFolder then return end
+
+	local coins = leaderstats:FindFirstChild("Coins")
+	local RunnerClass = dataFolder:FindFirstChild("RunnerClass")
+	local JumperClass = dataFolder:FindFirstChild("JumperClass")
+
+	if not coins or not RunnerClass then return end
+
+	local success, err = pcall(function()
+		DataStore:SetAsync(plr.UserId, {
+			Coins = coins.Value,
+			RunnerClass = RunnerClass.Value,
+			JumperClass = JumperClass.Value
+		})
+	end)
+
+	if success then
+		print("Saved data for", plr.Name)
+	else
+		warn("Failed to save:", err)
+	end
+end
+
+Players.PlayerAdded:Connect(function(plr)
+	print("Loading data for", plr.Name)
+
+	local leaderstats = plr:WaitForChild("leaderstats")
+	local coins = leaderstats:WaitForChild("Coins")
+	local dataFolder = plr:WaitForChild("Data")
+	local RunnerClass = dataFolder:WaitForChild("RunnerClass")
+	local JumperClass = dataFolder:WaitForChild("JumperClass")
+
+	-- Load data
+	local success, data = pcall(function()
+		return DataStore:GetAsync(plr.UserId)
+	end)
+
+	if success and data then
+		coins.Value = data.Coins or 0
+		RunnerClass.Value = data.RunnerClass or 0
+		JumperClass.Value = data.JumperClass or 0
+		print("Data loaded for", plr.Name, "Coins:", coins.Value, "RunnerClass:")
+		
+	else
+		print("No data found for", plr.Name, "or error loading data")
+		coins.Value = 0
+		RunnerClass.Value = 0
+		JumperClass.Value = 0
+	end
+
+	print("Data loaded for", plr.Name)
+
+	-- Debounce system (prevents spam)
+	local debounce = false
+
+	local function onChanged()
+		if debounce then return end
+		debounce = true
+
+		task.delay(2, function() -- waits 2s before saving
+			savePlayer(plr)
+			debounce = false
+		end)
+	end
+
+	-- Save when values change
+	coins.Changed:Connect(onChanged)
+	RunnerClass.Changed:Connect(onChanged)
+	JumperClass.Changed:Connect(onChanged)
+end)
+
+-- Save when player leaves
+Players.PlayerRemoving:Connect(function(plr)
+	print("Player leaving, saving:", plr.Name)
+	savePlayer(plr)
+end)
+
+-- Autosave every 60 seconds
+task.spawn(function()
+	while true do
+		task.wait(60)
+
+		for _, plr in pairs(Players:GetPlayers()) do
+			
+			savePlayer(plr)
+		end
+
+		print("Autosave complete")
+	end
+end)
