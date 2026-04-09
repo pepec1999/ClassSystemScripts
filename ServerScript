@@ -1,0 +1,202 @@
+local rp = game.ReplicatedStorage
+local modules = rp.Modules
+local events = rp.RemoteEvents
+
+local boughtRunner = events.BoughtRunnerClass
+local boughtJumper = events.BoughtJumperClass
+local boughtSlasher = events.BoughtSlasherClass
+
+
+local module2 = require(modules.AddingCoinsScript)
+
+local BuyingClass = require(modules.BuyingClasses)
+
+local Module5 = require(modules.LoadingClasses)
+
+local Players = game:GetService("Players")
+
+local Classprompt = workspace.Rig["Runner(buy)"]
+local ClJumperprompt = workspace.Rig2["Runner(buy)"]
+local ClSlasherprompt = workspace.Rig3["Runner(buy)"]
+local NormalClassPrompt = workspace.Rig4["Runner(buy)"]
+local CoinPrompt = workspace.Part.ProximityPrompt
+
+ 
+
+local db = true
+
+local function unequipAllClasses(player)
+	local knifeClone = player.Character:FindFirstChild("PlayersKnife") or player.Backpack:FindFirstChild("PlayersKnife")
+	if knifeClone then
+		local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+		knifeClone:Destroy()
+		humanoid.WalkSpeed = 16
+		humanoid.JumpPower = 50
+	end
+	local data = player:FindFirstChild("Data")
+	if not data then
+		return
+	end
+
+	local equippedValues = {
+		data:FindFirstChild("Equipped"),
+		data:FindFirstChild("NormalClassEquipped"),
+		data:FindFirstChild("JumperClassEquipped"),
+		data:FindFirstChild("SlasherClassEquipped"),
+	}
+
+	for _, equippedValue in equippedValues do
+		if equippedValue and equippedValue:IsA("IntValue") then
+			equippedValue.Value = 0
+		end
+	end
+end
+
+
+
+
+print("Server script loaded")
+
+Players.PlayerAdded:Connect(function(player)
+	print(player.Name .. " has joined the game!")
+
+	local leaderstats = Instance.new("Folder")
+	leaderstats.Name = "leaderstats"
+	leaderstats.Parent = player
+
+	local coins = Instance.new("IntValue")
+	coins.Name = "Coins"
+	coins.Value = 0
+	coins.Parent = leaderstats
+
+	local data = Instance.new("Folder")
+	data.Name = "Data"
+	data.Parent = player
+
+--Classes
+
+	local RunnerClass = Instance.new("IntValue")
+	RunnerClass.Name = "RunnerClass"
+	RunnerClass.Value = 0
+	RunnerClass.Parent = data
+
+
+	local equippedRunnerClass = Instance.new("IntValue")
+	equippedRunnerClass.Name = "Equipped"
+	equippedRunnerClass.Value = 0
+	equippedRunnerClass.Parent = data
+
+
+	local NormalClass = Instance.new("IntValue")
+	NormalClass.Name = "NormalClass"
+	NormalClass.Value = 1
+	NormalClass.Parent = data
+
+
+	local equippedNormalClass = Instance.new("IntValue")
+	equippedNormalClass.Name = "NormalClassEquipped"
+	equippedNormalClass.Value = 1
+	equippedNormalClass.Parent = data
+
+
+	local JumperClass = Instance.new("IntValue")
+	JumperClass.Name = "JumperClass"
+	JumperClass.Value = 0
+	JumperClass.Parent = data
+
+	
+	local equippedJumperClass = Instance.new("IntValue")
+	equippedJumperClass.Name = "JumperClassEquipped"
+	equippedJumperClass.Value = 0
+	equippedJumperClass.Parent = data
+	
+	
+	local SlasherClass = Instance.new("IntValue")
+	SlasherClass.Name = "SlasherClass"
+	SlasherClass.Value = 0
+	SlasherClass.Parent = data
+
+
+	local equippedSlasherClass = Instance.new("IntValue")
+	equippedSlasherClass.Name = "SlasherClassEquipped"
+	equippedSlasherClass.Value = 0
+	equippedSlasherClass.Parent = data
+	
+
+	player.CharacterAdded:Connect(function(character)
+		
+		print(player.Name .. " has spawned a new character!")
+		local humanoid = character:WaitForChild("Humanoid")
+
+		humanoid.WalkSpeed = 16
+
+		humanoid.Died:Connect(function()
+			print(player.Name .. " has died!")
+		end)
+	end)
+end)
+
+Classprompt.Triggered:Connect(function(player)
+	print(player.Name .. " Used the prompt!")
+
+	if db == true then
+		db = false
+
+		unequipAllClasses(player)
+
+		BuyingClass.buyingClass(player, "Runner")
+
+		db = true
+	end
+end)
+
+ClJumperprompt.Triggered:Connect(function(player)
+	print(player.Name .. " Used the prompt!")
+
+	if db == true then
+		db = false
+
+		unequipAllClasses(player)
+
+		BuyingClass.buyingClass(player, "JumperClass")
+
+		db = true
+	end
+end)
+
+ClSlasherprompt.Triggered:Connect(function(player)
+	print(player.Name .. " Used the prompt!")
+
+	if db == true then
+		db = false
+
+		unequipAllClasses(player)
+
+		BuyingClass.buyingClass(player, "SlasherClass")
+
+		db = true
+	end
+end)
+
+NormalClassPrompt.Triggered:Connect(function(player)
+	print(player.Name .. " Used the prompt!")
+
+	if db == true then
+		db = false
+
+		unequipAllClasses(player)
+
+		BuyingClass.buyingClass(player, "Normal")
+
+		db = true
+	end
+end)
+
+CoinPrompt.Triggered:Connect(function(player)
+	print(player.Name .. " Used the prompt!")
+	module2:addCoins(player)
+end)
+
+for _, player in pairs(Players:GetPlayers()) do
+	Module5.LoadClasses(player)
+end
