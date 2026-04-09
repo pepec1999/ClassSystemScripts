@@ -1,0 +1,39 @@
+local module = {}
+
+
+function module.LoadClasses(player)
+	local data = player:WaitForChild("Data")
+	local character = player.Character or player.CharacterAdded:Wait()
+	local humanoid = character:WaitForChild("Humanoid")
+	
+	local runnerClass = data:WaitForChild("RunnerClass")
+	local JumperClass = data:WaitForChild("JumperClass")
+	local SlasherClass = data:WaitForChild("SlasherClass")
+	
+	local part = workspace.Rig:WaitForChild("Equiped")
+	local part2 = workspace.Rig2:WaitForChild("Equiped")
+	local part3 = workspace.Rig3:WaitForChild("Equiped")
+	
+	
+	if runnerClass.Value == 1 then
+		print("Have runner class")
+		part.BrickColor = BrickColor.new("Lime green")
+	end
+	
+	if JumperClass.Value == 1 then
+		part2.BrickColor = BrickColor.new("Lime green")
+		print("Have Jumper class")
+	end
+	
+	if SlasherClass.Value == 1 then
+		part3.BrickColor = BrickColor.new("Lime green")
+		print("Have Slasher class")
+	end
+	
+end
+
+
+
+
+
+return module
